@@ -19,3 +19,11 @@ async def publish_stock_data(data):
     message = "Message published successfully"
     logger.info(message)
     return {"status": 200, "message": message}
+
+
+def shutdown_producer():
+    """Flush and close the producer when shutting down."""
+    logger.info("Shutting down producer...")
+    producer.flush()
+    producer.close()
+    logger.info("Producer shut down successfully.")
