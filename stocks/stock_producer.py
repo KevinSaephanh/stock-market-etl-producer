@@ -2,6 +2,7 @@ from confluent_kafka import Producer
 from config.config import settings
 from logger import logger
 
+
 producer_config = {
     "bootstrap.servers": settings.KAFKA_BOOTSTRAP_SERVERS,
     "security.protocol": "SASL_SSL",
