@@ -7,7 +7,7 @@ from logger import logger
 from config.config import settings
 
 
-class Timeframe(Enum):
+class Timeframe(str, Enum):
     """Timeframes supported by Alphavantage"""
 
     DAILY = "DAILY"
@@ -15,7 +15,7 @@ class Timeframe(Enum):
     MONTHLY = "MONTHLY"
 
 
-async def get_stock_historical_data(symbol: str, timeframe: Timeframe):
+async def run_etl_for_stock(symbol: str, timeframe: Timeframe):
     # Fetch historical data from Alphavantage
     logger.info("Fetching stock data from external API: Alphavantage")
     url = f"{settings.ALPHAVANTAGE_API_URL}/query?function=TIME_SERIES_{Timeframe[timeframe]}_ADJUSTED&symbol={symbol}&apikey={settings.ALPHAVANTAGE_API_KEY}"
