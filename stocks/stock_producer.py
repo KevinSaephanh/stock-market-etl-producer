@@ -9,6 +9,7 @@ producer_config = {
     "sasl.mechanism": "PLAIN",
     "sasl.username": settings.KAFKA_USERNAME,
     "sasl.password": settings.KAFKA_PASSWORD,
+    "session.timeout.ms": 45000,
 }
 producer = Producer(**producer_config)
 
