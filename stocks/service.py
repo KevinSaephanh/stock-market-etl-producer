@@ -38,8 +38,10 @@ def parse_stock_data(symbol: str, data: any, timeframe: str):
     # Iterate data items
     for date_str, values in timeframe_data.items():
         date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        data_map = {"date": date_str}
+        time_series_list = []
+
         if date >= cutoff_date:
-            transformed_data = {}
             # Add key/value of each field in the specific date to the map
             for key, value in values.items():
                 # Parse name from key
@@ -51,8 +53,10 @@ def parse_stock_data(symbol: str, data: any, timeframe: str):
 
                 # Convert value to int (for volume) or float (for prices)
                 if new_key == "volume":
-                    transformed_data[new_key] = int(value)
+                    data_map[new_key] = int(value)
                 else:
-                    transformed_data[new_key] = round(float(value), 2)
-            parsed_data[date_str] = transformed_data
+                    data_map[new_key] = round(float(value), 2)
+                time_series_list.append(data_map)
+
+            parsed_data["time_series"] = time_series_list
     return parsed_data
