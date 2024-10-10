@@ -12,21 +12,23 @@ producer_config = {
     "sasl.password": settings.KAFKA_PASSWORD,
     "session.timeout.ms": 45000,
 }
-producer = Producer(**producer_config)
 
 
-async def publish_stock_data(symbol, data):
-    """Publish stock data to Kafka topic"""
-    producer.send(settings.KAFKA_TOPIC, key=symbol, value=json.dumps(data))
-    producer.flush()
-    message = "Message published successfully to Kafka"
-    logger.info(message)
-    return {"status": 200, "message": message}
+class StockProducer:
+    def __init__(self):
+        self.producer = Producer(**producer_config)
 
+    def publish_stock_data(self, symbol, data):
+        """Publish stock data to Kafka topic"""
+        self.producer.send(settings.KAFKA_TOPIC, key=symbol, value=json.dumps(data))
+        self.producer.flush()
+        message = "Message published successfully to Kafka"
+        logger.info(message)
+        return {"status": 200, "message": message}
 
-def shutdown_producer():
-    """Flush and close the producer when shutting down."""
-    logger.info("Shutting down producer...")
-    producer.flush()
-    producer.close()
-    logger.info("Producer shut down successfully.")
+    def close(self):
+        """Flush and close the producer when shutting down."""
+        logger.info("Shutting down producer...")
+        self.producer.flush()
+        self.producer.close()
+        logger.info("Producer shut down successfully.")
