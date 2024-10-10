@@ -1,3 +1,4 @@
+import json
 from confluent_kafka import Producer
 from config.config import settings
 from logger import logger
@@ -14,10 +15,11 @@ producer_config = {
 producer = Producer(**producer_config)
 
 
-async def publish_stock_data(data):
+async def publish_stock_data(symbol, data):
     """Publish stock data to Kafka topic"""
-    producer.send(settings.KAFKA_TOPIC, data)
-    message = "Message published successfully"
+    producer.send(settings.KAFKA_TOPIC, key=symbol, value=json.dumps(data))
+    producer.flush()
+    message = "Message published successfully to Kafka"
     logger.info(message)
     return {"status": 200, "message": message}
 
