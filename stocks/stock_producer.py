@@ -17,7 +17,7 @@ producer = Producer(**producer_config)
 
 async def publish_stock_data(symbol, data):
     """Publish stock data to Kafka topic"""
-    producer.send(settings.KAFKA_TOPIC, key=symbol, value=json.dumps(data))
+    producer.produce(settings.KAFKA_TOPIC, key=symbol, value=json.dumps(data).encode('utf-8'))
     producer.flush()
     message = "Message published successfully to Kafka"
     logger.info(message)
