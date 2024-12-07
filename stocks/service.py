@@ -23,12 +23,12 @@ class StockRequest(BaseModel):
 
 async def run_etl_for_stocks(req: StockRequest):
     data = None
-    ts = TimeSeries(key=settings.ALPHAVANTAGE_API_KEY, output_format="compact")
+    ts = TimeSeries(key=settings.ALPHAVANTAGE_API_KEY, output_format="json")
 
     for symbol in req.symbols:
         match req.timeframe:
             case Timeframe.DAILY:
-                data, *_ = ts.get_daily_adjusted(symbol=symbol)
+                data, *_ = ts.get_daily_adjusted(symbol=symbol, outputsize="compact")
             case Timeframe.WEEKLY:
                 data, *_ = ts.get_weekly_adjusted(symbol=symbol)
             case Timeframe.MONTHLY:
