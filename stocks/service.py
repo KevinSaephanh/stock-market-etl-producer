@@ -1,10 +1,13 @@
-import aiohttp
+from typing import List
 from enum import Enum
-from stock_producer import publish_stock_data, shutdown_producer
+from alpha_vantage.timeseries import TimeSeries
+
+from pydantic import BaseModel
+from stock_producer import publish_stock_data
 from logger import logger
 from config.config import settings
 
-
+    
 class Timeframe(str, Enum):
     """Timeframes supported by Alphavantage"""
 
@@ -13,26 +16,25 @@ class Timeframe(str, Enum):
     MONTHLY = "MONTHLY"
 
 
-async def run_etl_for_stock(symbol: str, timeframe: Timeframe):
-    params = {
-        "function": f"TIME_SERIES_{Timeframe[timeframe]}",
-        "symbol": symbol,
-        "apikey": settings.ALPHAVANTAGE_API_KEY,
-    }
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(settings.ALPHAVANTAGE_API_URL, params=params) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    logger.info(f"Fetched stock data for {symbol} from Alphavantage")
-                    return publish_stock_data(symbol, data)
-                else:
-                    error_message = f"Failed to fetch data for {symbol}"
-                    logger.error(error_message)
-                    return {"status": response.status, "message": error_message}
-    except Exception as e:
-        error_message = f"Error while fetching stock data for {symbol}: {e}"
-        logger.error(error_message)
-        return {"status": 500, "message": error_message}
-    finally:
-        shutdown_producer()
+class StockRequest(BaseModel):
+    symbols: List[str]
+    timeframe: Timeframe
+
+
+async def run_etl_for_stocks(req: StockRequest):
+    data = None
+    ts = TimeSeries(key=settings.ALPHAVANTAGE_API_KEY, output_format="compact")
+
+    for symbol in req.symbols:
+        match req.timeframe:
+            case Timeframe.DAILY:
+                data, *_ = ts.get_daily_adjusted(symbol=symbol)
+            case Timeframe.WEEKLY:
+                data, *_ = ts.get_weekly_adjusted(symbol=symbol)
+            case Timeframe.MONTHLY:
+                data, *_ = ts.get_monthly_adjusted(symbol=symbol)
+            case _:
+                logger.error(f"Error while fetching stock data for {symbol}")
+                return None
+        publish_stock_data(symbol, data)
+    return data
