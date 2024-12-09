@@ -28,5 +28,4 @@ def shutdown_producer():
     """Flush and close the producer when shutting down."""
     logger.info("Shutting down producer...")
     producer.flush()
-    producer.close()
     logger.info("Producer shut down successfully.")

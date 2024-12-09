@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from logger import logger
-from stocks import router
+from stocks.router import router
 from stocks.stock_producer import shutdown_producer
 
 

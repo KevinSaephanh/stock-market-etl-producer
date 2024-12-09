@@ -1,5 +1,6 @@
+from typing import Any
 from fastapi import APIRouter, HTTPException
-from service import StockRequest, run_etl_for_stocks
+from .service import StockRequest, run_etl_for_stocks
 from logger import logger
 
 
@@ -7,7 +8,7 @@ router = APIRouter(tags=["Stocks"])
 
 
 @router.post("/bulk-etl")
-async def run_bulk_etl(req: StockRequest) -> any:
+async def run_bulk_etl(req: StockRequest) -> Any:
     """Fetch historical data for list of stocks and publish to Kafka"""
     if len(list) > 5:
         return {"status": 400, "message": "Stock querying limited to 5 symbols"}

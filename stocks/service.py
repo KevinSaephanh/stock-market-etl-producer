@@ -3,7 +3,7 @@ from enum import Enum
 from alpha_vantage.timeseries import TimeSeries
 
 from pydantic import BaseModel
-from stock_producer import publish_stock_data
+from .stock_producer import publish_stock_data
 from logger import logger
 from config.config import settings
 
