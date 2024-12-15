@@ -3,7 +3,6 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     ENV: str
-    PORT: int
     ALPHA_VANTAGE_API_KEY: str
     KAFKA_TOPIC: str
     KAFKA_BOOTSTRAP_SERVERS: str
